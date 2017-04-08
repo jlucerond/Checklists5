@@ -12,7 +12,7 @@ protocol ItemDetailViewControllerDelegate: class {
     func itemDetailViewControllerDidCancel(_ controller: ItemDetailViewController)
     func itemDetailViewController(_ controller: ItemDetailViewController,
                                didFinishAdding item: ChecklistItem)
-    func itemDetailViewController(_controller: ItemDetailViewController,
+    func itemDetailViewController(_ controller: ItemDetailViewController,
                                didFinishEditing item: ChecklistItem)
 }
 
@@ -30,7 +30,7 @@ class ItemDetailViewController: UITableViewController {
     @IBAction func doneButtonPressed() {
         if let item = itemToEdit {
             item.text = textField.text!
-            delegate?.itemDetailViewController(_controller: self, didFinishEditing: item)
+            delegate?.itemDetailViewController(self, didFinishEditing: item)
         } else {
             let newItem = ChecklistItem()
             newItem.checked = false

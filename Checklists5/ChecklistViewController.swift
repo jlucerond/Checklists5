@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  ChecklistViewController.swift
 //  Checklists5
 //
 //  Created by Joe Lucero on 3/9/17.
@@ -9,42 +9,11 @@
 import UIKit
 
 class ChecklistViewController: UITableViewController {
-    var items: [ChecklistItem]
+    var checklist: Checklist!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        items = [ChecklistItem]()
-        
-        let row0item = ChecklistItem()
-        row0item.text = "work"
-        row0item.checked = true
-        items.append(row0item)
-        
-        let row1item = ChecklistItem()
-        row1item.text = "code"
-        row1item.checked = false
-        items.append(row1item)
-
-        let row2item = ChecklistItem()
-        row2item.text = "eat"
-        row2item.checked = true
-        items.append(row2item)
-
-        let row3item = ChecklistItem()
-        row3item.text = "read"
-        row3item.checked = false
-        items.append(row3item)
-
-        let row4item = ChecklistItem()
-        row4item.text = "workout"
-        row4item.checked = false
-        items.append(row4item)
-
-        super.init(coder: aDecoder)
+        title = checklist.name
     }
 
 }
@@ -54,7 +23,7 @@ extension ChecklistViewController {
     override func tableView(_ tableView: UITableView,
                             cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ChecklistItem", for: indexPath)
-        let item = items[indexPath.row]
+        let item = checklist.items[indexPath.row]
         
         configureText(for: cell, with: item)
         configureCheckmark(for: cell, with: item)
@@ -64,13 +33,13 @@ extension ChecklistViewController {
     
     override func tableView(_ tableView: UITableView,
                             numberOfRowsInSection section: Int) -> Int {
-        return items.count
+        return checklist.items.count
     }
     
     override func tableView(_ tableView: UITableView,
                    commit editingStyle: UITableViewCellEditingStyle,
                    forRowAt indexPath: IndexPath) {
-        items.remove(at: indexPath.row)
+        checklist.items.remove(at: indexPath.row)
         tableView.deleteRows(at: [indexPath], with: .automatic)
     }
 }
@@ -81,7 +50,7 @@ extension ChecklistViewController {
                             didSelectRowAt indexPath: IndexPath) {
         if let cell = tableView.cellForRow(at: indexPath) {
             
-            let item = items[indexPath.row]
+            let item = checklist.items[indexPath.row]
             item.toggleCheckmark()
             configureCheckmark(for: cell, with: item)
         }
@@ -97,23 +66,24 @@ extension ChecklistViewController: ItemDetailViewControllerDelegate {
     
     func itemDetailViewController(_ controller: ItemDetailViewController,
                                didFinishAdding item: ChecklistItem) {
-        let newRow = items.count
+        let newRow = checklist.items.count
         let newIndexPath = IndexPath(row: newRow, section: 0)
-        items.append(item)
+        checklist.items.append(item)
         
         tableView.insertRows(at: [newIndexPath], with: .automatic)
         
         dismiss(animated: true, completion: nil)
     }
     
-    func itemDetailViewController(_controller: ItemDetailViewController,
+    func itemDetailViewController(_ controller: ItemDetailViewController,
                                didFinishEditing item: ChecklistItem) {
-        if let index = items.index(of: item) {
+        if let index = checklist.items.index(of: item) {
             let indexPath = IndexPath(row: index, section: 0)
             if let cell = tableView.cellForRow(at: indexPath) {
                 configureText(for: cell, with: item)
             }
         }
+        
         dismiss(animated: true, completion: nil)
     }
 }
@@ -152,8 +122,9 @@ extension ChecklistViewController {
             controller.delegate = self
             
             if let indexPath = tableView.indexPath(for: (sender as? UITableViewCell)!) {
-                controller.itemToEdit = items[indexPath.row]
+                controller.itemToEdit = checklist.items[indexPath.row]
             }
         }
     }
 }
+
